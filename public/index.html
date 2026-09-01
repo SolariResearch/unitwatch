@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0A0A0B">
+  <title>Unitwatch — systemd drop-ins for people and agents</title>
+  <meta name="description" content="Paste a systemctl status blob. Unitwatch parses it, proposes a Restart= drop-in, a TCP watchdog timer, and a rollback — on the page for humans, as WebMCP tools for agents.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <img src="/favicon.svg" width="28" height="28" alt="">
+      <div>
+        <p class="eyebrow">Solari Systems</p>
+        <h1>Unitwatch</h1>
+      </div>
+    </div>
+    <div class="top-meta">
+      <span id="webmcp-badge" data-state="off">Checking WebMCP…</span>
+      <a class="quiet" href="#how">How tools work</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="lede">A public bench for crashed units. A human pastes <code>systemctl status</code>. An agent calls the same generators. Both see the drop-in, the TCP watchdog, and the rollback.</p>
+      <p class="sub">Nothing is installed on your hosts. Unitwatch only writes files onto this page.</p>
+    </section>
+
+    <div class="studio">
+      <section class="panel" aria-labelledby="input-h">
+        <h2 id="input-h">Input</h2>
+        <label class="block">
+          <span>systemctl status / journal snippet</span>
+          <textarea id="status-blob" rows="14" spellcheck="false" placeholder="Paste systemctl status UNIT --no-pager, or a journalctl snippet."></textarea>
+        </label>
+        <div class="row">
+          <label>Unit
+            <input id="unit-name" class="mono" placeholder="shop-api.service" autocomplete="off">
+          </label>
+          <label>Restart=
+            <select id="restart-policy">
+              <option value="always" selected>always</option>
+              <option value="on-failure">on-failure</option>
+              <option value="on-abnormal">on-abnormal</option>
+              <option value="on-watchdog">on-watchdog</option>
+              <option value="on-abort">on-abort</option>
+              <option value="on-success">on-success</option>
+              <option value="no">no</option>
+            </select>
+          </label>
+          <label>RestartSec
+            <input id="restart-sec" type="number" min="0" max="86400" value="5">
+          </label>
+          <label>StartLimitIntervalSec
+            <input id="start-limit" type="number" min="0" max="86400" value="0">
+          </label>
+        </div>
+        <div class="row">
+          <label>Watchdog host
+            <input id="watch-host" class="mono" value="127.0.0.1">
+          </label>
+          <label>TCP port
+            <input id="watch-port" type="number" min="1" max="65535" value="8080">
+          </label>
+          <label>Interval (s)
+            <input id="watch-interval" type="number" min="5" max="86400" value="30">
+          </label>
+        </div>
+        <p id="form-error" class="form-error" hidden></p>
+        <div class="actions">
+          <button type="button" id="btn-sample" class="ghost">Load sample</button>
+          <button type="button" id="btn-parse">Parse</button>
+          <button type="button" id="btn-dropin">Drop-in</button>
+          <button type="button" id="btn-watchdog">Watchdog</button>
+          <button type="button" id="btn-rollback" class="ghost">Rollback</button>
+          <button type="button" id="btn-plan" class="primary">Full plan</button>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="out-h">
+        <h2 id="out-h">On the page</h2>
+        <h3>Diagnosis</h3>
+        <div id="diagnosis"></div>
+        <h3>Proposed files</h3>
+        <div id="files"></div>
+      </section>
+    </div>
+
+    <section class="split">
+      <article class="panel">
+        <h2>Agent activity</h2>
+        <p class="hint">When ChatGPT or Chrome with WebMCP enabled calls a tool, the call lands here and the files above update.</p>
+        <ul id="activity" class="activity"></ul>
+      </article>
+      <article class="panel" id="how">
+        <h2>WebMCP tools</h2>
+        <p class="hint">Registered with <code>document.modelContext.registerTool</code> when this page is open in a WebMCP-capable browser. Not MCP-over-HTTP.</p>
+        <ul id="tool-list" class="tool-list"></ul>
+        <ol class="howto">
+          <li>Open this URL in ChatGPT’s in-app browser, or Chrome with <code>chrome://flags/#enable-webmcp-testing</code>.</li>
+          <li>Ask: “Parse the sample unit, then propose a restart drop-in and a TCP watchdog on 8080.”</li>
+          <li>Watch the diagnosis and files fill in. Copy them to the host yourself.</li>
+        </ol>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <p>Unitwatch is a Solari Systems LLC workshop. MIT licensed. Generates systemd snippets only — it never SSHes, never emails, never posts.</p>
+    <p>Cove / Solari Systems LLC</p>
+  </footer>
+
+  <script src="/js/engine.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/webmcp.js"></script>
+</body>
+</html>
