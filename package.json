@@ -1,0 +1,16 @@
+{
+  "name": "webmcp-unitwatch",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Unitwatch - systemd drop-ins, TCP watchdogs, and rollbacks for people and agents via WebMCP.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node tests/run.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "4.86.0"
+  }
+}
